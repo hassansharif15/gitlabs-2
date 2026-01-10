@@ -1,0 +1,70 @@
+# -----------------------------
+# Python cache and bytecode
+# -----------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# -----------------------------
+# Virtual environments
+# -----------------------------
+.env
+.venv
+env/
+venv/
+ENV/
+
+# -----------------------------
+# IDE / Editor settings
+# -----------------------------
+.vscode/
+.idea/
+*.code-workspace
+
+# -----------------------------
+# Logs and temporary files
+# -----------------------------
+*.log
+*.tmp
+*.temp
+.DS_Store
+
+# -----------------------------
+# Test and coverage output
+# -----------------------------
+.pytest_cache/
+.tox/
+coverage.xml
+htmlcov/
+*.cover
+*.coverage
+.cache/
+
+# -----------------------------
+# Build / Distribution artifacts
+# -----------------------------
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# -----------------------------
+# CI/CD specific
+# -----------------------------
+# GitHub Actions logs or temporary artifacts
+*.bak
+*.old
+*.retry
+
+# -----------------------------
+# Jupyter notebooks checkpoints
+# -----------------------------
+.ipynb_checkpoints/
+
+# -----------------------------
+# OS-specific junk files
+# -----------------------------
+Thumbs.db
+ehthumbs.db

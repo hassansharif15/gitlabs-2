@@ -1,0 +1,27 @@
+name: automating image push to dockerhub
+on: [push]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.MY_SECRET_US }}
+          password: ${{ secrets.MY_SECRET_AT }}
+
+      - name: Build and Publish
+        run: |
+          registry="hassan614"
+          sha=$(git rev-parse --short HEAD)
+          primary_tag="${registry}/myapp:${sha}"
+
+          echo "Building and pushing image: $primary_tag"
+
+          docker build -t $primary_tag -f Dockerfile .
+          docker push $primary_tag
