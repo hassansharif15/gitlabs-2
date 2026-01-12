@@ -1,29 +1,47 @@
-Ì∞≥ Flask + MySQL with Docker (Multi-Stage Build)
-Ì≥ò Overview
+# üê≥ Flask + MySQL with Docker (Multi-Stage Build)
 
-This project demonstrates how to containerize a Flask application that connects to a MySQL database, using Docker Compose and a multi-stage Dockerfile for optimized image size and performance.
+> A production-ready containerized Flask application with MySQL integration using Docker Compose and optimized multi-stage builds
 
-The app runs a simple Flask API that connects to a MySQL database and displays the MySQL version.
+## üìã Overview
 
+This project demonstrates best practices for containerizing a Flask application that connects to a MySQL database. It showcases:
+- **Docker Compose** for multi-container orchestration
+- **Multi-stage Dockerfile** for optimized image size
+- **Container networking** between services
+
+The app runs a simple Flask API that connects to MySQL and displays the database version.
+
+---
+
+## üìÅ Project Structure
+
+```
 hello_flask/
-‚îÇ
-‚îú‚îÄ‚îÄ app.py                # Flask app connecting to MySQL
-‚îú‚îÄ‚îÄ Docker-compose.yml    # Defines Flask and MySQL containers
-‚îú‚îÄ‚îÄ Dockerfile            # Multi-stage Docker build file
-‚îî‚îÄ‚îÄ README.md             # This documentation
+‚îú‚îÄ‚îÄ app.py                # Flask application with MySQL connection
+‚îú‚îÄ‚îÄ Docker-compose.yml    # Multi-container configuration
+‚îú‚îÄ‚îÄ Dockerfile            # Multi-stage build configuration
+‚îî‚îÄ‚îÄ README.md             # Documentation
+```
 
-‚öôÔ∏è   Technologies Used
+---
 
-Ì∞ç Python 3.8 (Flask)
+## üõ†Ô∏è Technologies Used
 
-Ì∑ÑÔ∏è MySQL 5.7
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Python** | 3.8 | Flask application runtime |
+| **Flask** | Latest | Web framework |
+| **MySQL** | 5.7 | Database |
+| **Docker** | Latest | Containerization |
+| **Docker Compose** | 3.8 | Container orchestration |
 
-Ì∞≥ Docker & Docker Compose
+---
 
-‚öôÔ∏è Multi-stage Docker Build
+## üíª Code Examples
 
-Flask application (app.py)
+### Flask Application (`app.py`)
 
+```python
 from flask import Flask
 import MySQLdb
 
@@ -33,10 +51,10 @@ app = Flask(__name__)
 def hello_world():
     # Connect to the MySQL database
     db = MySQLdb.connect(
-        host="mydb",          # Hostname of the MySQL container
-        user="root",          # Username
-        passwd="my-secret-pw",# Password
-        db="mysql"            # Database name
+        host="mydb",             # Service name from docker-compose
+        user="root",
+        passwd="my-secret-pw",
+        db="mysql"
     )
 
     cur = db.cursor()
@@ -46,10 +64,12 @@ def hello_world():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+```
 
-Ì∞ã Dockerfile (Multi-Stage Build)
+### Multi-Stage Dockerfile
 
-# stage 1: Build stage
+```dockerfile
+# Stage 1: Build stage (compile dependencies)
 FROM python:3.8-slim AS build
 
 WORKDIR /app
@@ -61,10 +81,9 @@ RUN apt-get update && apt-get install -y \
     pkg-config
 
 COPY . .
-
 RUN pip install flask mysqlclient
 
-# stage 2: Production stage
+# Stage 2: Production stage (minimal runtime)
 FROM python:3.8-slim
 
 WORKDIR /app
@@ -74,15 +93,17 @@ COPY --from=build /app /app
 EXPOSE 5000
 
 CMD ["python", "app.py"]
+```
 
-Ì∑† Why multi-stage?
+#### Why Multi-Stage?
 
-The first stage installs dependencies and compiles native modules.
+‚úÖ **Stage 1** installs build tools and compiles native modules  
+‚úÖ **Stage 2** copies only the compiled artifacts, reducing final image size  
+‚úÖ **Result** Smaller, faster, production-ready images  
 
-The second stage copies only what‚Äôs needed, reducing image size.
+### Docker Compose Configuration
 
-‚öôÔ∏è  Docker Compose Configuration
-
+```yaml
 version: '3.8'
 
 services:
@@ -97,51 +118,74 @@ services:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
+```
 
+**Service Details:**
+- `web` - Flask application running on port 5000
+- `mydb` - MySQL 5.7 database with secure root password
 
-Ì∑© How it works:
+---
 
-The web service runs your Flask app on port 5000.
+## üöÄ Quick Start
 
-The mydb service runs a MySQL 5.7 database with a root password.
+### 1. Build and Run
 
-Ì∫Ä How to Run the Project
-
-1.Build and run containers
-
+```bash
 docker-compose up --build
+```
 
-2.Access the app
-Open your browser and go to:
-Ì±â http://localhost:5000
+### 2. Access the Application
 
-3.Stop the containers
+Open your browser and navigate to:
+```
+http://localhost:5000
+```
+
+### 3. Stop the Containers
+
+```bash
 docker-compose down
+```
 
-Ì∑∞ Useful Docker Commands
+---
 
-docker ps                          # List running containers
-docker-compose logs web            # View Flask logs
-docker exec -it <container_id> sh  # Enter a running container
-docker-compose up -d               # Run containers in detached mode
+##  Useful Docker Commands
 
+| Command | Purpose |
+|---------|---------|
+| `docker ps` | List running containers |
+| `docker-compose logs web` | View Flask application logs |
+| `docker exec -it <container_id> sh` | Access container shell |
+| `docker-compose up -d` | Run in detached mode (background) |
+| `docker images` | List all images |
 
-Ì∑© Key Learnings
+---
 
-How to connect Flask with MySQL inside Docker.
+##  Key Learning Points
 
-How to use multi-stage builds for smaller, cleaner images.
+- ‚úÖ Connecting Flask applications to MySQL inside Docker
+- ‚úÖ Multi-stage Docker builds for optimized image sizes
+- ‚úÖ Defining multi-container dependencies with Docker Compose
+- ‚úÖ Container networking using service names (Flask ‚Üî MySQL)
+- ‚úÖ Best practices for production-ready containerization
 
-How to define multi-container dependencies with docker-compose.
+---
 
-Managing container networking (Flask ‚Üî MySQL via service names).
+##  Future Improvements
 
+-  Add Nginx as a reverse proxy for Flask
+-  Implement persistent MySQL data storage with volumes
+-  Extend Flask with CRUD operations
+-  Add health checks to Docker Compose
+-  Implement environment variables for secrets management
+-  Add automated testing in the CI/CD pipeline
 
-Ìºü Future Improvements
+---
 
-Add Nginx as a reverse proxy for Flask.
+##  Notes
 
-Add persistent storage for MySQL data using volumes.
+- Service names in Docker Compose (`mydb`) are automatically resolvable hostnames
+- Multi-stage builds reduce image size significantly (typically 60-70% smaller)
+- Never expose sensitive credentials in production - use secrets management
 
-Extend Flask routes for CRUD operations.
-
+---
